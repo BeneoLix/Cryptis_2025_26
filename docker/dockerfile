@@ -1,0 +1,56 @@
+# Utiliser une image Python de base
+FROM python:3.11-slim
+
+# Installer git et outils nécessaires
+RUN apt-get update && apt-get install -y \
+    libusb-1.0-0-dev \
+    libusb-1.0-0 \
+    usbutils\
+    gcc-arm-none-eabi \
+    binutils-arm-none-eabi \
+    make \
+    git \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Dossier de travail
+WORKDIR /opt
+
+# Cloner le repo principal chipwhisperer
+RUN git clone https://github.com/newaetech/chipwhisperer.git
+
+# Aller dans /opt/chipwhisperer/jupyter et cloner chipwhisperer-jupyter
+WORKDIR /opt/chipwhisperer
+RUN git clone https://github.com/newaetech/chipwhisperer-jupyter.git
+
+# Aller dans /opt/chipwhisperer-minimal et cloner chipwhisperer-minimal
+WORKDIR /opt/chipwhisperer
+RUN git clone https://github.com/newaetech/chipwhisperer-minimal.git
+
+# Aller dans /opt et cloner Cryptis_2025_25
+
+WORKDIR /opt
+RUN git clone https://github.com/BeneoLix/SideSCA-Traces-Public.git
+
+# Installer les dépendances Python
+RUN pip install --upgrade pip && \
+    pip install \
+        jupyterlab \
+        scared \
+        estraces \
+        numpy \
+        scipy \
+        scikit-learn \
+        chipwhisperer \
+        tqdm \
+        ipywidgets \
+        holoviews \
+        libusb1\
+	matplotlib
+
+# Exposer le port de JupyterLab
+EXPOSE 8888
+
+# Lancer JupyterLab
+CMD ["jupyter", "lab", "--ip=0.0.0.0", "--allow-root", "--no-browser"]
+

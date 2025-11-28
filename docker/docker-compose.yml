@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  chipwhisperer:
+    image: cryptis-cw
+    privileged: true
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./my-notebooks:/opt/my-notebooks
+    stdin_open: true
+    tty: true
